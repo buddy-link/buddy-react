@@ -1,0 +1,30 @@
+{
+  "name": "buddy-react",
+  "version": "1.0.1",
+  "description": "The only Buddy Link package you need if you are using react",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bn.js": "^5.1.5",
+    "@types/node": "^20.11.17",
+    "@types/react": "^18.2.55",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@ladderlabs/buddy-sdk": "^0.2.17",
+    "@solana/wallet-adapter-react": "^0.15.20",
+    "nanoid": "^5.0.5",
+    "react": "^18.2.0"
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./state": "./dist/state/index.js",
+    "./link": "./link/state/index.js"
+  }
+}
