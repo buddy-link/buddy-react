@@ -1,27 +1,25 @@
-import { ObserverType, ObservableType, InitialStateType, EventBusType } from '../types';
 
+let globalStateInstance = null;
 
-let globalStateInstance: EventBusType<any> | null = null;
-
-export const Observable = <T>(initialValue: T): ObservableType<T> => {
+export const Observable = (initialValue) => {
   let value = initialValue;
-  let subscriptions = new Map<string, ObserverType<T>>();
+  let subscriptions = new Map();
 
   return {
-    subscribe(observer: ObserverType<T>) {
+    subscribe(observer) {
       const { id } = observer;
       subscriptions.set(id, observer);
       observer.next(value); // Immediately push the current value upon subscription
     },
-    unsubscribe(id: string) {
+    unsubscribe(id) {
       subscriptions.delete(id);
     },
-    next(nextValue: T) {
+    next(nextValue) {
       value = nextValue;
       subscriptions.forEach((observer) => observer.next(nextValue));
     },
     complete() {
-      subscriptions.forEach((observer) => observer.complete?.());
+      subscriptions.forEach((observer) => observer.complete());
       subscriptions.clear();
     },
     getValue() {
@@ -30,19 +28,22 @@ export const Observable = <T>(initialValue: T): ObservableType<T> => {
   };
 };
 
-const createEventBus = <T>(initialState: InitialStateType<T>): EventBusType<T> => {
-  const observables = new Map<string, ObservableType<T>>();
+const createEventBus = (initialState) => {
+  const observables = new Map();
   initialState.init(observables);
 
   return {
-    getSource(id: string) {
-      return observables.get(id);
+    getSource(id) {
+      const next_source = observables.get(id);
+      if (!next_source) console.log(`Could not find buddyState for ${id}, please add to initialState`);
+      return next_source;
     },
-    update(id: string, value: T) {
+    update(id, value) {
       const observable = observables.get(id);
       if (observable) {
         observable.next(value);
       } else {
+        // If no observable exists for this id, create a new one
         const newObservable = Observable(value);
         observables.set(id, newObservable);
         newObservable.next(value);
@@ -52,7 +53,7 @@ const createEventBus = <T>(initialState: InitialStateType<T>): EventBusType<T> =
   };
 };
 
-export const initBuddyState = <T>(initialState: { [key: string]: T }) => {
+export const initBuddyState = (initialState) => {
   if (!globalStateInstance) {
     globalStateInstance = createEventBus({
       init(observables) {
@@ -66,9 +67,13 @@ export const initBuddyState = <T>(initialState: { [key: string]: T }) => {
   }
 };
 
-export const getStateInstance = <T>(): EventBusType<T> => {
+export const getStateInstance = () => {
   if (!globalStateInstance) {
-    throw Error("State has not been initialized. Please initialize state at the root of your application.");
+    throw new Error("State has not been initialized. Please initialize state at the root of your application.");
   }
-  return globalStateInstance as EventBusType<T>;
+  return globalStateInstance;
+};
+
+export const resetGlobalStateForTesting = () => {
+  globalStateInstance = null;
 };
