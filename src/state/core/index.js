@@ -1,6 +1,11 @@
 
 let globalStateInstance = null;
 
+/**
+ * Factory function to create an Observable.
+ * @param {*} initialValue The initial value of the Observable.
+ * @returns An object representing the observable with methods to subscribe, unsubscribe, push next values, complete the observable, and get the current value.
+ */
 export const Observable = (initialValue) => {
   let value = initialValue;
   let subscriptions = new Map();
@@ -9,7 +14,7 @@ export const Observable = (initialValue) => {
     subscribe(observer) {
       const { id } = observer;
       subscriptions.set(id, observer);
-      observer.next(value); // Immediately push the current value upon subscription
+      observer.next(value);
     },
     unsubscribe(id) {
       subscriptions.delete(id);
@@ -28,6 +33,11 @@ export const Observable = (initialValue) => {
   };
 };
 
+/**
+ * Creates an event bus with a given initial state.
+ * @param {Object} initialState The initial state for the event bus.
+ * @returns An object representing the event bus with methods to get source, update values, and access the observables.
+ */
 const createEventBus = (initialState) => {
   const observables = new Map();
   initialState.init(observables);
@@ -43,7 +53,6 @@ const createEventBus = (initialState) => {
       if (observable) {
         observable.next(value);
       } else {
-        // If no observable exists for this id, create a new one
         const newObservable = Observable(value);
         observables.set(id, newObservable);
         newObservable.next(value);
@@ -53,6 +62,10 @@ const createEventBus = (initialState) => {
   };
 };
 
+/**
+ * Initializes the global state with the provided initial state.
+ * @param {Object} initialState The initial state object.
+ */
 export const initBuddyState = (initialState) => {
   if (!globalStateInstance) {
     globalStateInstance = createEventBus({
@@ -67,6 +80,11 @@ export const initBuddyState = (initialState) => {
   }
 };
 
+/**
+ * Returns the global state instance.
+ * @returns The global state instance.
+ * @throws If the state has not been initialized.
+ */
 export const getStateInstance = () => {
   if (!globalStateInstance) {
     throw new Error("State has not been initialized. Please initialize state at the root of your application.");
@@ -74,6 +92,9 @@ export const getStateInstance = () => {
   return globalStateInstance;
 };
 
+/**
+ * Resets the global state for testing purposes.
+ */
 export const resetGlobalStateForTesting = () => {
   globalStateInstance = null;
 };

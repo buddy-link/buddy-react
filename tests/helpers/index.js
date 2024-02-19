@@ -45,3 +45,21 @@ export async function renderReact(description, component, assertions) {
     cleanup(testState);
   });
 }
+
+export const waitForEffects = async (getEffects, wait) => {
+  let effects = getEffects();
+  const max_length = effects?.length;
+  let completed = 0;
+
+  if (max_length >= 1) {
+    const timeout = () => (new Promise(completed => setTimeout(() => {
+      let next_completed = 0;
+      for (let effect of effects) {
+        if (effect) next_completed++;
+      }
+      completed = next_completed;
+      if (completed < max_length) timeout();
+    }, wait || 5000)));
+    return await timeout();
+  }
+};
