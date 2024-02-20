@@ -68,6 +68,7 @@ const createEventBus = (initialState) => {
  */
 export const initBuddyState = (initialState) => {
   if (!globalStateInstance) {
+    console.log('Initializing State');
     globalStateInstance = createEventBus({
       init(observables) {
         Object.keys(initialState).forEach((key) => {

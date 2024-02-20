@@ -1,1 +1,4 @@
-export function useBuddyLink(): undefined;
+export function useBuddyLink(signAllTransactions: any): {
+    init(): void;
+    claim(): void;
+};

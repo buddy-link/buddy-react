@@ -1,12 +1,2 @@
-export function useInitBuddyLink(programId: any): {
-    client: any;
-    options: any;
-    organization: any;
-    profile: any;
-    treasuryPDA: undefined;
-    members: any;
-    memberStatistics: any;
-    treasuries: any;
-    mints: any;
-};
+export function useInitBuddyLink(getBuddyState: any, connection: any, publicKey: any, programId: any): void;
 export function getLinkInstance(): any;

@@ -5,16 +5,19 @@ import {
   BUDDY_MEMBERS,
   BUDDY_MINTS,
   BUDDY_ORGANIZATION,
-  BUDDY_PROFILE, BUDDY_TREASURIES
+  BUDDY_PROFILE,
+  BUDDY_TREASURIES,
+  BUDDY_CONNECTION,
+  BUDDY_PUBLIC_KEY
 } from "../core/state";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Client} from "@ladderlabs/buddy-sdk";
-import {sendAllTransactions} from "../utils/helpers";
-import {useConnection, useWallet} from "@solana/wallet-adapter-react";
 
 const USDC_MINT = "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v";
 
-export const useBuddyLink = () => {
+export const useBuddyLink = (signAllTransactions) => {
+  const [connection] = useBuddyState(BUDDY_CONNECTION);
+  const [publicKey] = useBuddyState(BUDDY_PUBLIC_KEY);
   const [client] = useBuddyState(BUDDY_CLIENT);
   const [profile] = useBuddyState(BUDDY_PROFILE);
   const [members] = useBuddyState(BUDDY_MEMBERS);
@@ -25,8 +28,6 @@ export const useBuddyLink = () => {
 
   const [organizationName] = useBuddyState(BUDDY_ORGANIZATION);
   const [mints] = useBuddyState(BUDDY_MINTS);
-  const { connection } = useConnection();
-  const { publicKey, signAllTransactions } = useWallet();
   const { referrer } = useReferrer();
 
   console.log('members', members);
@@ -206,5 +207,12 @@ export const useBuddyLink = () => {
     // if (client) asyncBuddy().then(setBuddy);
   }, [client, connection, publicKey, signAllTransactions, profile, member, treasuries, client]);
 
-  return buddy;
+  return {
+    init() {
+
+    },
+    claim() {
+
+    }
+  };
 };
